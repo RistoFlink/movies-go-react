@@ -9,6 +9,7 @@ const Login = () => {
   const { setJwtToken } = useOutletContext();
   const { setAlertMessage } = useOutletContext();
   const { setAlertClassName } = useOutletContext();
+const { toggleRefresh } = useOutletContext();
 
   const navigate = useNavigate();
 
@@ -31,7 +32,7 @@ const Login = () => {
         body: JSON.stringify(payload),
     };
 
-    fetch(`http://localhost:8080/authenticate`, requestOptions)
+    fetch(`/authenticate`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
             if (data.error) {
@@ -41,6 +42,7 @@ const Login = () => {
                 setJwtToken(data.access_token);
                 setAlertClassName("d-none");
                 setAlertMessage("");
+                toggleRefresh(true);
                 navigate("/");
             }
         })
