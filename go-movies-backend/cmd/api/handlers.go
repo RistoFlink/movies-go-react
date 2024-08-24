@@ -34,6 +34,16 @@ func (app *application) AllMovies(w http.ResponseWriter, r *http.Request) {
 	app.writeJSON(w, http.StatusOK, movies)
 }
 
+func (app *application) AllGenres(w http.ResponseWriter, r *http.Request) {
+	genres, err := app.DB.AllGenres()
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	_ = app.writeJSON(w, http.StatusOK, genres)
+}
+
 func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	// read a JSON payload
 	var requestPayload struct {
