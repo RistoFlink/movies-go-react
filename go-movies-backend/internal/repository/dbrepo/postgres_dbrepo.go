@@ -82,7 +82,8 @@ func (m *PostgresDBRepo) OneMovie(id int) (*models.Movie, error) {
 		&movie.Description,
 		&movie.Image,
 		&movie.CreatedAt,
-		&movie.UpdatedAt)
+		&movie.UpdatedAt,
+	)
 
 	if err != nil {
 		return nil, err
@@ -102,7 +103,8 @@ func (m *PostgresDBRepo) OneMovie(id int) (*models.Movie, error) {
 		var g models.Genre
 		err := rows.Scan(
 			&g.ID,
-			&g.Genre)
+			&g.Genre,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +112,7 @@ func (m *PostgresDBRepo) OneMovie(id int) (*models.Movie, error) {
 		genres = append(genres, &g)
 	}
 	movie.Genres = genres
-	return &movie, nil
+	return &movie, err
 }
 
 func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre, error) {
@@ -132,13 +134,14 @@ func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre
 		&movie.Description,
 		&movie.Image,
 		&movie.CreatedAt,
-		&movie.UpdatedAt)
+		&movie.UpdatedAt,
+	)
 
 	if err != nil {
 		return nil, nil, err
 	}
 	//get genres if there are any
-	query = `select g.id, g.genre from movies_genre mg left join genres g on (mg.genre_id = g.id) where mg.movie_id = $1 order by g.genre`
+	query = `select g.id, g.genre from movies_genres mg left join genres g on (mg.genre_id = g.id) where mg.movie_id = $1 order by g.genre`
 
 	rows, err := m.DB.QueryContext(ctx, query, id)
 	if err != nil && err != sql.ErrNoRows {
@@ -153,7 +156,8 @@ func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre
 		var g models.Genre
 		err := rows.Scan(
 			&g.ID,
-			&g.Genre)
+			&g.Genre,
+		)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -176,13 +180,14 @@ func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre
 		var g models.Genre
 		err := gRows.Scan(
 			&g.ID,
-			&g.Genre)
+			&g.Genre,
+		)
 		if err != nil {
 			return nil, nil, err
 		}
 		allGenres = append(allGenres, &g)
 	}
-	return &movie, allGenres, nil
+	return &movie, allGenres, err
 }
 
 func (m *PostgresDBRepo) GetUserByID(id int) (*models.User, error) {
@@ -250,10 +255,11 @@ func (m *PostgresDBRepo) AllGenres() ([]*models.Genre, error) {
 	for rows.Next() {
 		var g models.Genre
 		err := rows.Scan(
-			&g.Genre,
 			&g.ID,
+			&g.Genre,
 			&g.CreatedAt,
-			&g.UpdatedAt)
+			&g.UpdatedAt,
+		)
 		if err != nil {
 			return nil, err
 		}

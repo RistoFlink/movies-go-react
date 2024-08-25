@@ -31,17 +31,7 @@ func (app *application) AllMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, movies)
-}
-
-func (app *application) AllGenres(w http.ResponseWriter, r *http.Request) {
-	genres, err := app.DB.AllGenres()
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-
-	_ = app.writeJSON(w, http.StatusOK, genres)
+	_ = app.writeJSON(w, http.StatusOK, movies)
 }
 
 func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
@@ -189,4 +179,14 @@ func (app *application) MovieForEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
+}
+
+func (app *application) AllGenres(w http.ResponseWriter, r *http.Request) {
+	genres, err := app.DB.AllGenres()
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	_ = app.writeJSON(w, http.StatusOK, genres)
 }
